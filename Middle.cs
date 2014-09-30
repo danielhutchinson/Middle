@@ -14,6 +14,7 @@ namespace Middle
         dynamic ExecuteQuerySingleDynamic(string querySql, params object[] args);
         IEnumerable<T> ExecuteQuery<T>(string querySql, params object[] args) where T : new();
         IEnumerable<dynamic> ExecuteQueryDynamic(string querySql, params object[] args);
+		int ExecuteNonQuery(string querySql, params object[] args);
         List<int> Transaction(params SqlCommand[] cmds);
     }
 
@@ -116,6 +117,21 @@ namespace Middle
                 }
             }
             return results;
+        }
+		
+		// Execute a query with no return value
+        public int ExecuteNonQuery(string querySql, params object[] args)
+        {
+            int rowsAffected;
+            var conn = new SqlConnection(ConnectionString);
+            var cmd = new SqlCommand(querySql, conn);
+            conn.Open();
+            using (conn)
+            {
+                rowsAffected = cmd.ExecuteNonQuery();
+            }
+
+            return rowsAffected;
         }
     }
 
